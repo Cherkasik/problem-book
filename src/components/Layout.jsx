@@ -63,6 +63,12 @@ const Error = styled.div`
   width: 100%;
 `;
 
+const Select = styled.select`
+  margin-right: 10px;
+  height: 20px;
+  width: 100px;
+`;
+
 const emptyErrors = {
   username: '',
   email: '',
@@ -70,7 +76,7 @@ const emptyErrors = {
 };
 
 const Layout = ({
-  children, changeSortDirection, rotateArrow, getTasks,
+  children, changeSortDirection, rotateArrow, getTasks, sortField, setSortField,
 }) => {
   const [isOpen, setOpen] = useState(false);
   const [error, setError] = useState(emptyErrors);
@@ -97,6 +103,15 @@ const Layout = ({
       <Header>
         <p>Task list</p>
         <div>
+          <Select
+            value={sortField}
+            onChange={(event) => setSortField(event.target.value)}
+          >
+            <option value="id">id</option>
+            <option value="username">username</option>
+            <option value="email">email</option>
+            <option value="status">status</option>
+          </Select>
           <Arrow
             rotateArrow={rotateArrow}
             onClick={changeSortDirection}
@@ -143,6 +158,8 @@ Layout.propTypes = {
   changeSortDirection: PropTypes.func.isRequired,
   rotateArrow: PropTypes.bool.isRequired,
   getTasks: PropTypes.func.isRequired,
+  sortField: PropTypes.string.isRequired,
+  setSortField: PropTypes.func.isRequired,
 };
 
 export default Layout;

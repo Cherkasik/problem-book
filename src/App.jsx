@@ -10,12 +10,11 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [tasks, setTasks] = useState({});
   const [sortDirection, setSortDirection] = useState(true);
-  // const [sortField, setSortField] = useState(false);
-  // const [sortValue, setSortValue] = useState(false);
+  const [sortField, setSortField] = useState('id');
   const [page, setPage] = useState(1);
 
   const getTasks = () => {
-    axios.get(`/?developer=Cherkasik&sort_direction=${sortDirection ? 'asc' : 'desc'}&page=${page}`)
+    axios.get(`/?developer=Cherkasik&sort_direction=${sortDirection ? 'asc' : 'desc'}&page=${page}&sort_field=${sortField}`)
       .then((x) => setTasks(x.data.message));
   };
 
@@ -39,7 +38,7 @@ function App() {
   useEffect(() => {
     getTasks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortDirection, page]);
+  }, [sortDirection, page, sortField]);
 
   const logIn = (token) => {
     const date = new Date();
@@ -79,6 +78,8 @@ function App() {
           setPage(1);
           getTasks();
         }}
+        sortField={sortField}
+        setSortField={setSortField}
       >
         {tasks.tasks?.map((task) => (
           <TaskCard
