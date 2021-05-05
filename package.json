@@ -2,7 +2,7 @@
   "name": "problem-book",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://cherkasik.github.io/task-list",
+  "homepage": "http://cherkasik.github.io/problem-book",
   "dependencies": {
     "axios": "^0.21.1",
     "prop-types": "^15.7.2",
