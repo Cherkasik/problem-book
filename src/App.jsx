@@ -8,22 +8,28 @@ import Pages from './components/Pages';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
-  const [tasks, setTasks] = useState(false);
+  const [tasks, setTasks] = useState({});
   const [sortDirection, setSortDirection] = useState(true);
   // const [sortField, setSortField] = useState(false);
   // const [sortValue, setSortValue] = useState(false);
+  const [page, setPage] = useState(1);
 
   const getTasks = () => {
-    axios.get(`/?developer=Cherkasik&sort_direction=${sortDirection ? 'asc' : 'desc'}`)
+    axios.get(`/?developer=Cherkasik&sort_direction=${sortDirection ? 'asc' : 'desc'}&page=${page}`)
       .then((x) => setTasks(x.data.message));
+  };
+
+  const checkIfTokenExpired = () => {
+    const expireDate = new Date(localStorage.getItem('expireDate'));
+    return expireDate <= new Date();
   };
 
   useEffect(() => {
     axios.defaults.baseURL = 'https://uxcandy.com/~shapoval/test-task-backend/v2';
     if (localStorage.getItem('token')) {
-      const expireDate = new Date(localStorage.getItem('expireDate'));
-      if (expireDate <= new Date()) {
+      if (checkIfTokenExpired()) {
         localStorage.clear();
+        setLoggedIn(false);
         return;
       }
       setLoggedIn(true);
@@ -33,7 +39,7 @@ function App() {
   useEffect(() => {
     getTasks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortDirection]);
+  }, [sortDirection, page]);
 
   const logIn = (token) => {
     const date = new Date();
@@ -50,6 +56,18 @@ function App() {
 
   const changeSortDirection = () => setSortDirection(!sortDirection);
 
+  const sendUpdateRequest = (id, text, status) => {
+    if (checkIfTokenExpired()) {
+      setLoggedIn(false);
+      return null;
+    }
+    const data = new FormData();
+    data.set('token', localStorage.getItem('token'));
+    data.set('text', text);
+    data.set('status', status);
+    return axios.post(`/edit/${id}?developer=Cherkasik`, data);
+  };
+
   return (
     <>
       <GlobalStyle />
@@ -57,7 +75,10 @@ function App() {
       <Layout
         changeSortDirection={changeSortDirection}
         rotateArrow={sortDirection}
-        getTasks={getTasks}
+        getTasks={() => {
+          setPage(1);
+          getTasks();
+        }}
       >
         {tasks.tasks?.map((task) => (
           <TaskCard
@@ -67,12 +88,14 @@ function App() {
             email={task.email}
             status={task.status}
             text={task.text}
+            updateCard={(text, status) => sendUpdateRequest(task.id, text, status)}
+            getTasks={getTasks}
           />
         ))}
         <Pages
-          pageNumber={Math.ceil(tasks.totalTaskCount / 3) || 0}
-          currentPage={1}
-          onChange={() => {}}
+          pageNumber={Math.ceil(tasks.total_task_count / 3) || 0}
+          currentPage={page}
+          onChange={(event) => setPage(parseInt(event.target.value, 10))}
         />
       </Layout>
     </>

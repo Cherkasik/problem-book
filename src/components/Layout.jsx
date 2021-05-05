@@ -103,7 +103,10 @@ const Layout = ({
             src={ArrowSvg}
           />
           <Plus
-            onClick={() => setOpen(true)}
+            onClick={() => {
+              setError(emptyErrors);
+              setOpen(true);
+            }}
             src={PlusSvg}
           />
           <ModalContainer setOpen={setOpen} isOpen={isOpen} header="Create task">

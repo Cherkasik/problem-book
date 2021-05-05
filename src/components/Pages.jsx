@@ -1,16 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
-// сделать селектом
+const Container = styled.div`
+  width: 100%;
+`;
+
 const Pages = ({ pageNumber, currentPage, onChange }) => {
   if (pageNumber === 0) return null;
   return (
-    // eslint-disable-next-line jsx-a11y/no-onchange
-    <select value={currentPage} onChange={onChange}>
-      {Array.from(Array(pageNumber).keys()).map((number) => (
-        <option key={number} value={number + 1}>{number + 1}</option>
-      ))}
-    </select>
+    <Container>
+      {/* eslint-disable-next-line jsx-a11y/no-onchange */}
+      <select value={currentPage} onChange={onChange}>
+        {Array.from(Array(pageNumber).keys()).map((number) => (
+          <option key={number} value={number + 1}>{number + 1}</option>
+        ))}
+      </select>
+    </Container>
   );
 };
 
