@@ -7,6 +7,7 @@ const Container = styled.form`
   display: flex;
   flex-direction: column;
   max-width: 260px;
+  width: 100%;
   margin: 10px;
   padding: 20px;
   border: 1px solid black;
@@ -70,7 +71,7 @@ TaskCard.propTypes = {
   name: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
-  status: PropTypes.string.isRequired,
+  status: PropTypes.number.isRequired,
   isLoggedIn: PropTypes.bool.isRequired,
 };
 

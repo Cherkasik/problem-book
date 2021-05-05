@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
-import { Modal } from 'react-responsive-modal';
-import 'react-responsive-modal/styles.css';
+import axios from 'axios';
 import LogoSvg from '../assets/logo.svg';
 import AdminSvg from '../assets/admin.svg';
-import CrossSvg from '../assets/cross.svg';
+import ModalContainer from './ModalContainer';
 
 const Container = styled.div`
   width: calc(100% - 40px);
@@ -42,31 +41,6 @@ const Login = styled.button`
   font-weight: bold;
 `;
 
-const ModalHeader = styled.div`
-  width: calc(100% - 20px);
-  display: flex;
-  justify-content: space-between;
-  line-height: 20px;
-  background-color: aquamarine;
-  padding: 10px;
-`;
-
-const ModalContent = styled.div`
-  width: calc(100% - 20px);
-  line-height: 20px;
-  background-color: white;
-  padding: 10px;
-  color: red;
-  form { color: black; }
-`;
-
-const CloseButton = styled.img`
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  margin-left: 20px;
-`;
-
 const Label = styled.label`
   display: flex;
   flex-wrap: wrap;
@@ -78,9 +52,19 @@ const Label = styled.label`
   margin: 20px 0;
 `;
 
+const Error = styled.div`
+  color: red;
+  width: 100%;
+`;
+
+const emptyErrors = {
+  username: '',
+  password: '',
+};
+
 const NavBar = ({ loggedIn, logOut, logIn }) => {
   const [isOpen, setOpen] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(emptyErrors);
 
   const handleAdminClick = () => {
     setError('');
@@ -93,15 +77,18 @@ const NavBar = ({ loggedIn, logOut, logIn }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setError('');
-    const login = event.target.login.value;
-    const password = event.target.password.value;
-    if (login === 'admin' && password === '123') {
-      logIn();
+    setError(emptyErrors);
+    const data = new FormData();
+    data.set('username', event.target.login.value);
+    data.set('password', event.target.password.value);
+    axios.post('/login?developer=Cherkasik', data).then((result) => {
+      if (result.data.status === 'error') {
+        setError(result.data.message);
+        return;
+      }
+      logIn(result.data.message.token);
       setOpen(false);
-      return;
-    }
-    setError('Неправильный логин или пароль');
+    });
   };
 
   return (
@@ -114,39 +101,29 @@ const NavBar = ({ loggedIn, logOut, logIn }) => {
         {loggedIn ? 'Switch to user' : 'Switch to admin'}
         <img src={AdminSvg} alt="" />
       </Login>
-      <Modal
-        open={isOpen}
-        center
-        onClose={() => setOpen(false)}
-        closeOnOverlayClick
-        closeOnEsc
-        showCloseIcon={false}
-        focusTrapped={false}
-        styles={{ modal: { padding: 0 } }}
+      <ModalContainer
+        isOpen={isOpen}
+        setOpen={setOpen}
+        header="Log in as admin"
       >
-        <ModalHeader>
-          Login as admin
-          <CloseButton src={CrossSvg} onClick={() => setOpen(false)} />
-        </ModalHeader>
-        <ModalContent>
-          {error}
-          <form onSubmit={handleSubmit}>
-            <Label>
-              Login
-              <input
-                name="login"
-              />
-            </Label>
-            <Label>
-              Password
-              <input
-                name="password"
-              />
-            </Label>
-            <button type="submit">Login</button>
-          </form>
-        </ModalContent>
-      </Modal>
+        <form onSubmit={handleSubmit}>
+          <Label>
+            Login
+            <Error>{error.username}</Error>
+            <input
+              name="login"
+            />
+          </Label>
+          <Label>
+            Password
+            <Error>{error.password}</Error>
+            <input
+              name="password"
+            />
+          </Label>
+          <button type="submit">Login</button>
+        </form>
+      </ModalContainer>
     </Container>
   );
 };
