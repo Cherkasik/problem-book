@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.js": "/problem-book/static/js/main.d22dc89f.chunk.js",
-    "main.js.map": "/problem-book/static/js/main.d22dc89f.chunk.js.map",
+    "main.js": "/problem-book/static/js/main.cd641c4c.chunk.js",
+    "main.js.map": "/problem-book/static/js/main.cd641c4c.chunk.js.map",
     "runtime-main.js": "/problem-book/static/js/runtime-main.fe000192.js",
     "runtime-main.js.map": "/problem-book/static/js/runtime-main.fe000192.js.map",
     "static/css/2.b6f7359a.chunk.css": "/problem-book/static/css/2.b6f7359a.chunk.css",
-    "static/js/2.f3fab380.chunk.js": "/problem-book/static/js/2.f3fab380.chunk.js",
-    "static/js/2.f3fab380.chunk.js.map": "/problem-book/static/js/2.f3fab380.chunk.js.map",
+    "static/js/2.26b1f247.chunk.js": "/problem-book/static/js/2.26b1f247.chunk.js",
+    "static/js/2.26b1f247.chunk.js.map": "/problem-book/static/js/2.26b1f247.chunk.js.map",
     "index.html": "/problem-book/index.html",
     "static/css/2.b6f7359a.chunk.css.map": "/problem-book/static/css/2.b6f7359a.chunk.css.map",
-    "static/js/2.f3fab380.chunk.js.LICENSE.txt": "/problem-book/static/js/2.f3fab380.chunk.js.LICENSE.txt",
+    "static/js/2.26b1f247.chunk.js.LICENSE.txt": "/problem-book/static/js/2.26b1f247.chunk.js.LICENSE.txt",
     "static/media/admin.9385f271.svg": "/problem-book/static/media/admin.9385f271.svg",
     "static/media/cross.47eb640c.svg": "/problem-book/static/media/cross.47eb640c.svg",
     "static/media/down-arrow.20d70776.svg": "/problem-book/static/media/down-arrow.20d70776.svg",
@@ -20,7 +20,7 @@
   "entrypoints": [
     "static/js/runtime-main.fe000192.js",
     "static/css/2.b6f7359a.chunk.css",
-    "static/js/2.f3fab380.chunk.js",
-    "static/js/main.d22dc89f.chunk.js"
+    "static/js/2.26b1f247.chunk.js",
+    "static/js/main.cd641c4c.chunk.js"
   ]
 }
