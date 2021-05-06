@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
-import axios from 'axios';
 import LogoSvg from '../assets/logo.svg';
 import AdminSvg from '../assets/admin.svg';
 import ModalContainer from './ModalContainer';
+import FormField from './FormField';
+import { loginRequest } from '../requests';
 
 const Container = styled.div`
   width: calc(100% - 40px);
@@ -41,22 +42,6 @@ const Login = styled.button`
   font-weight: bold;
 `;
 
-const Label = styled.label`
-  display: flex;
-  flex-wrap: wrap;
-  flex: 1;
-  input {
-    width: 100%;
-    margin-top: 10px;
-  }
-  margin: 20px 0;
-`;
-
-const Error = styled.div`
-  color: red;
-  width: 100%;
-`;
-
 const emptyErrors = {
   username: '',
   password: '',
@@ -78,17 +63,18 @@ const NavBar = ({ loggedIn, logOut, logIn }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     setError(emptyErrors);
-    const data = new FormData();
-    data.set('username', event.target.login.value);
-    data.set('password', event.target.password.value);
-    axios.post('/login?developer=Cherkasik', data).then((result) => {
-      if (result.data.status === 'error') {
-        setError(result.data.message);
-        return;
-      }
-      logIn(result.data.message.token);
-      setOpen(false);
-    });
+    loginRequest(
+      event.target.login.value,
+      event.target.password.value,
+      (result) => {
+        if (result.data.status === 'error') {
+          setError(result.data.message);
+          return;
+        }
+        logIn(result.data.message.token);
+        setOpen(false);
+      },
+    );
   };
 
   return (
@@ -107,20 +93,8 @@ const NavBar = ({ loggedIn, logOut, logIn }) => {
         header="Log in as admin"
       >
         <form onSubmit={handleSubmit}>
-          <Label>
-            Login
-            <Error>{error.username}</Error>
-            <input
-              name="login"
-            />
-          </Label>
-          <Label>
-            Password
-            <Error>{error.password}</Error>
-            <input
-              name="password"
-            />
-          </Label>
+          <FormField name="Login" error={error.username} />
+          <FormField name="Password" error={error.password} />
           <button type="submit">Login</button>
         </form>
       </ModalContainer>

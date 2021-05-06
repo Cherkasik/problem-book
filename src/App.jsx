@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { createGlobalStyle } from 'styled-components';
-import axios from 'axios';
 import NavBar from './components/NavBar';
 import Layout from './components/Layout';
 import TaskCard from './components/TaskCard';
 import Pages from './components/Pages';
+import { getTasksRequest, updateTaskRequest } from './requests';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -14,7 +14,8 @@ function App() {
   const [page, setPage] = useState(1);
 
   const getTasks = () => {
-    axios.get(`/?developer=Cherkasik&sort_direction=${sortDirection ? 'asc' : 'desc'}&page=${page}&sort_field=${sortField}`)
+    setPage(1);
+    getTasksRequest(sortDirection, page, sortField)
       .then((x) => setTasks(x.data.message));
   };
 
@@ -24,7 +25,6 @@ function App() {
   };
 
   useEffect(() => {
-    axios.defaults.baseURL = 'https://uxcandy.com/~shapoval/test-task-backend/v2';
     if (localStorage.getItem('token')) {
       if (checkIfTokenExpired()) {
         localStorage.clear();
@@ -60,11 +60,7 @@ function App() {
       setLoggedIn(false);
       return null;
     }
-    const data = new FormData();
-    data.set('token', localStorage.getItem('token'));
-    data.set('text', text);
-    data.set('status', status);
-    return axios.post(`/edit/${id}?developer=Cherkasik`, data);
+    return updateTaskRequest(id, text, status);
   };
 
   return (
@@ -74,10 +70,7 @@ function App() {
       <Layout
         changeSortDirection={changeSortDirection}
         rotateArrow={sortDirection}
-        getTasks={() => {
-          setPage(1);
-          getTasks();
-        }}
+        getTasks={() => getTasks()}
         sortField={sortField}
         setSortField={setSortField}
       >

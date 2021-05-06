@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import EditSvg from '../assets/edit.svg';
 import ModalContainer from './ModalContainer';
+import FormField from './FormField';
 
 const Container = styled.form`
   display: flex;
@@ -53,22 +54,6 @@ const Edit = styled.img`
   cursor: pointer;
 `;
 
-const Label = styled.label`
-  display: flex;
-  flex-wrap: wrap;
-  flex: 1;
-  input {
-    width: 100%;
-    margin-top: 10px;
-  }
-  margin: 20px 0;
-`;
-
-const Error = styled.div`
-  color: red;
-  width: 100%;
-`;
-
 const emptyError = {
   text: '',
   status: '',
@@ -79,11 +64,18 @@ const TaskCard = ({
 }) => {
   const [isOpen, setOpen] = useState(false);
   const [error, setError] = useState(emptyError);
+  const isEdited = status % 10 === 1;
+  const isDone = Math.floor(status / 10) === 1;
 
   const handleSubmit = (event) => {
     event.preventDefault();
     setError(emptyError);
-    const request = updateCard(event.target.text.value, event.target.status.value);
+    const newText = event.target.text.value;
+    let newStatus = parseInt(event.target.status.value, 10) * 10;
+    if (newText !== text || isEdited) {
+      newStatus += 1;
+    }
+    const request = updateCard(newText, newStatus);
     if (request) {
       request.then((result) => {
         if (result.data.status === 'ok') {
@@ -95,14 +87,14 @@ const TaskCard = ({
   };
 
   return (
-    <Container done={status >= 10}>
+    <Container done={isDone}>
       <Header>
         <User>
           <p>{name}</p>
           <p>{email}</p>
         </User>
         <Status>
-          <p>{status}</p>
+          <p>{isEdited ? 'Edited' : ''}</p>
           {isLoggedIn && (
             <>
               <Edit
@@ -114,21 +106,13 @@ const TaskCard = ({
               />
               <ModalContainer setOpen={setOpen} isOpen={isOpen} header="Create task">
                 <form onSubmit={handleSubmit}>
-                  <Label>
-                    Text
-                    <Error>{error.text}</Error>
-                    <input defaultValue={text} name="text" />
-                  </Label>
-                  <Label>
-                    Status
-                    <Error>{error.status}</Error>
-                    <select defaultValue={status} name="status">
+                  <FormField name="Text" error={error.text} defaultValue={text} />
+                  <FormField name="Status" error={error.status} type="select">
+                    <select defaultValue={isDone ? 1 : 0} name="status">
                       <option value="0">Task not done</option>
-                      <option value="1">Task not done, edited</option>
-                      <option value="10">Task done</option>
-                      <option value="11">Task done, edited</option>
+                      <option value="1">Task done</option>
                     </select>
-                  </Label>
+                  </FormField>
                   <button type="submit">Save</button>
                 </form>
               </ModalContainer>

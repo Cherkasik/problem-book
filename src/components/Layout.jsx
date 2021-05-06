@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
-import axios from 'axios';
 import ArrowSvg from '../assets/down-arrow.svg';
 import PlusSvg from '../assets/plus.svg';
 import ModalContainer from './ModalContainer';
+import { createTaskRequest } from '../requests';
 
 const Container = styled.div`
   width: 100%;
@@ -84,18 +84,19 @@ const Layout = ({
   const handleSubmit = (event) => {
     event.preventDefault();
     setError(emptyErrors);
-    const data = new FormData();
-    data.set('username', event.target.username.value);
-    data.set('email', event.target.email.value);
-    data.set('text', event.target.text.value);
-    axios.post('/create?developer=Cherkasik', data).then((result) => {
-      if (result.data.status === 'error') {
-        setError(result.data.message);
-        return;
-      }
-      getTasks();
-      setOpen(false);
-    });
+    createTaskRequest(
+      event.target.username.value,
+      event.target.email.value,
+      event.target.text.value,
+      (result) => {
+        if (result.data.status === 'error') {
+          setError(result.data.message);
+          return;
+        }
+        getTasks();
+        setOpen(false);
+      },
+    );
   };
 
   return (
