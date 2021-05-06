@@ -14,7 +14,6 @@ function App() {
   const [page, setPage] = useState(1);
 
   const getTasks = () => {
-    setPage(1);
     getTasksRequest(sortDirection, page, sortField)
       .then((x) => setTasks(x.data.message));
   };
@@ -83,7 +82,10 @@ function App() {
             status={task.status}
             text={task.text}
             updateCard={(text, status) => sendUpdateRequest(task.id, text, status)}
-            getTasks={getTasks}
+            getTasks={() => {
+              setPage(1);
+              getTasks();
+            }}
           />
         ))}
         <Pages
